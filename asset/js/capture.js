@@ -2,7 +2,7 @@ $(document).ready( function(){
     loadDevice();
 
     $('.stick').click( function(){
-        stick();
+        takePicture();
         return false;
     });
 });
@@ -30,9 +30,25 @@ function loadDevice(){
     });
 }
 
-function stick(){
+function takePicture(){
     var renderer = $('#renderer').get(0);
     var camera = $('#camera').get(0);
 
     renderer.getContext('2d').drawImage( camera, 0, 0, 640, 480 );
+    var base64 = renderer.toDataURL('image/png');
+
+    stickPicture( base64 );
+}
+
+function stickPicture( base64 ){
+    $.ajax({
+        type: 'post',
+        url: 'stick',
+        contentType: 'application/json',
+        data: JSON.stringify({
+            picture: base64,
+        })
+    }).done( function( response ){
+        console.log( response );
+    });
 }
