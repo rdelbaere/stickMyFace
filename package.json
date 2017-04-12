@@ -1,9 +1,10 @@
 {
-    "dependencies": {
-        "js-yaml": "*",
-        "express": "*",
-	    "body-parser": "*",
-        "ejs": "*",
-        "aws-sdk": ">= 2.0.9"
-    }
+  "dependencies": {
+    "aws-sdk": ">= 2.0.9",
+    "body-parser": "*",
+    "ejs": "*",
+    "express": "*",
+    "jimp": "^0.2.27",
+    "js-yaml": "*"
+  }
 }

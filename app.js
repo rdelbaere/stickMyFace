@@ -26,11 +26,16 @@ application.post( '/stick', function( req, res ){
 
     var sticker = new Sticker( req.body.picture, config );
     sticker.build( function( data ){
+		if( data == false ){
+			return res.send( JSON.stringify({
+	            status: false,
+	        }));
+		}
 
-        return res.send( JSON.stringify({
-            status: true,
-            data: data
-        }));
+		return res.send( JSON.stringify({
+			status: true,
+			picture: data
+		}));
     });
 });
 

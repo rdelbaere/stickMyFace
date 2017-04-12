@@ -1,8 +1,9 @@
 var AWS = require('aws-sdk');
-var atob = require('atob');
+var Jimp = require('Jimp');
 
 var Sticker = function( origin, config ){
     this.origin = origin;
+    this.buffer = new Buffer( this.origin.split(',')[1], 'base64');
 
     AWS.config.credentials = {
         accessKeyId: config.aws.key,
@@ -14,20 +15,115 @@ var Sticker = function( origin, config ){
 }
 
 Sticker.prototype.build = function( callback ){
-    var data = this.origin.split(',');
+    this.callback = callback;
+
     var params = {
         Attributes: [ 'ALL' ],
         Image: {
-            Bytes: new Buffer( data[1], 'base64'),
+            Bytes: this.buffer,
         },
     };
 
+    var self = this;
     this.rekognition.detectFaces(params, function( err, data ){
         if( err ){
             console.log( err );
         }
 
-        callback( data );
+        if( data.FaceDetails.length == 0 ){
+            return self.callback( false );
+        }
+
+        self.extractEmotions( data );
+    });
+}
+
+Sticker.prototype.extractEmotions = function( data ){
+    this.faces = [];
+
+    for( var i in data.FaceDetails ){
+        var face = data.FaceDetails[ i ];
+
+        if( face.Emotions != undefined && face.Emotions.length > 0 ){
+            this.addStick( face );
+        }
+    }
+
+    if( this.faces.length == 0 ){
+        return this.callback( false );
+    }
+
+    this.loadPicture();
+}
+
+Sticker.prototype.addStick = function( face ){
+    this.faces.push({
+        emotion: face.Emotions[0].Type.toLowerCase(),
+        box: {
+            x: face.BoundingBox.Left,
+            y: face.BoundingBox.Top,
+            width: face.BoundingBox.Width,
+            height: face.BoundingBox.Height,
+        }
+    });
+}
+
+Sticker.prototype.loadPicture = function(){
+    var self = this;
+    Jimp.read( this.buffer ).then( function( picture ){
+        self.sticksPicture( picture );
+    }).catch( function( err ){
+        console.log( err );
+        self.callback( false );
+    });
+}
+
+Sticker.prototype.sticksPicture = function( picture ){
+    var proccessed = 0;
+    var self = this;
+    for( var i in this.faces ){
+        this.stickPicture( this.faces[ i ], picture, function(){
+            proccessed++;
+
+            if( self.faces.length == proccessed ){
+                self.encode( picture );
+            }
+        });
+    }
+}
+
+Sticker.prototype.stickPicture = function( face, picture, callback ){
+    var stick = __dirname + '/../asset/img/' + face.emotion + '.png';
+
+    Jimp.read( stick ).then( function( sticker ){
+        sticker.resize(
+            picture.bitmap.width * face.box.width,
+            picture.bitmap.height * face.box.height
+        );
+
+        picture.composite(
+            sticker,
+            picture.bitmap.width * face.box.x,
+            picture.bitmap.height * face.box.y
+        );
+
+        callback();
+    }).catch( function( err ){
+        console.log( err );
+        callback();
+    });
+}
+
+Sticker.prototype.encode = function( picture ){
+    var self = this;
+
+    picture.getBase64( Jimp.MIME_PNG, function( err, b64 ){
+        if( err ){
+            console.log( err );
+            return self.callback( false );
+        }
+
+        self.callback( b64 );
     });
 }
 

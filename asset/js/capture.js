@@ -49,6 +49,15 @@ function stickPicture( base64 ){
             picture: base64,
         })
     }).done( function( response ){
-        console.log( response );
+        if( response.status ){
+            showResult( response.picture );
+        }else{
+
+        }
     });
+}
+
+function showResult( picture ){
+    $('.mirror-picture').attr( 'src', picture );
+    $('.mirror').fadeIn();
 }
