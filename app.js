@@ -12,7 +12,7 @@ application.use( '/stickMyFace/asset', express.static( __dirname + '/asset' ) );
 application.set( 'views', __dirname + '/view' );
 
 application.get( config.route.prefix + '/', function( req, res ){
-	res.render( 'capture.ejs' );
+	res.render( 'capture.ejs', { prefix: config.route.prefix } );
 });
 
 application.post( config.route.prefix + '/stick', function( req, res ){

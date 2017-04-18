@@ -49,7 +49,7 @@ function stickPicture( base64 ){
 
     $.ajax({
         type: 'post',
-        url: 'stickMyFace/stick',
+        url: prefix + '/stick',
         contentType: 'application/json',
         data: JSON.stringify({
             picture: base64,
