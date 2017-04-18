@@ -1,5 +1,5 @@
 var AWS = require('aws-sdk');
-var Jimp = require('Jimp');
+var Jimp = require('jimp');
 
 var Sticker = function( origin, config ){
     this.origin = origin;
