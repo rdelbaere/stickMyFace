@@ -8,7 +8,7 @@ var config = Config.get( 'config.yml' );
 
 var application = express();
 application.use( bodyParser.json({ limit: '10mb' }) );
-application.use( express.static( 'asset' ) );
+application.use( express.static( __dirname + 'asset' ) );
 application.set('views', __dirname + '/view' );
 
 application.get( '/', function( req, res ){
