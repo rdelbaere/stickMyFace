@@ -11,11 +11,11 @@ application.use( bodyParser.json({ limit: '10mb' }) );
 application.use( '/stickMyFace/asset', express.static( __dirname + '/asset' ) );
 application.set( 'views', __dirname + '/view' );
 
-application.get( '/', function( req, res ){
+application.get( config.route.prefix + '/', function( req, res ){
 	res.render( 'capture.ejs' );
 });
 
-application.post( '/stick', function( req, res ){
+application.post( config.route.prefix + '/stick', function( req, res ){
     res.setHeader('Content-Type', 'application/json');
 
     if( req.body.picture == undefined ){
