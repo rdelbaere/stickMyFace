@@ -31,7 +31,7 @@ Sticker.prototype.build = function( callback ){
         }
 
         if( data.FaceDetails.length == 0 ){
-            return self.callback( false );
+            return self.callback( 'Aucun visage n\'a été détecté sur cette photo, veuillez réessayer plus tard.', false );
         }
 
         self.extractEmotions( data );
@@ -64,6 +64,7 @@ Sticker.prototype.addStick = function( face ){
             y: face.BoundingBox.Top,
             width: face.BoundingBox.Width,
             height: face.BoundingBox.Height,
+            rotation: face.Pose.Roll,
         }
     });
 }
@@ -74,7 +75,7 @@ Sticker.prototype.loadPicture = function(){
         self.sticksPicture( picture );
     }).catch( function( err ){
         console.log( err );
-        self.callback( false );
+        self.callback( 'Une erreur est survenue, veuillez réessayer plus tard.', false );
     });
 }
 
@@ -93,13 +94,13 @@ Sticker.prototype.sticksPicture = function( picture ){
 }
 
 Sticker.prototype.stickPicture = function( face, picture, callback ){
-    var stick = __dirname + '/../asset/img/' + face.emotion + '.png';
+    var stick = __dirname + '/../asset/img/emoji/' + face.emotion + '.png';
 
     Jimp.read( stick ).then( function( sticker ){
         sticker.resize(
             picture.bitmap.width * face.box.width,
             picture.bitmap.height * face.box.height
-        );
+        ).rotate( face.box.rotation, true );
 
         picture.composite(
             sticker,
@@ -117,13 +118,13 @@ Sticker.prototype.stickPicture = function( face, picture, callback ){
 Sticker.prototype.encode = function( picture ){
     var self = this;
 
-    picture.getBase64( Jimp.MIME_PNG, function( err, b64 ){
+    picture.getBase64( Jimp.MIME_JPEG, function( err, b64 ){
         if( err ){
             console.log( err );
-            return self.callback( false );
+            return self.callback( 'Une erreur est survenue, veuillez réessayer plus tard.', false );
         }
 
-        self.callback( b64 );
+        self.callback( false, b64 );
     });
 }
 

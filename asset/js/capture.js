@@ -5,6 +5,17 @@ $(document).ready( function(){
         takePicture();
         return false;
     });
+
+    $('.mirror-picture__close').click( function(){
+        closeMirror();
+        return false;
+    });
+
+    // $('.mirror-picture__download').click( function(){
+    //     var data = $('.mirror-picture__diplay').attr('src').split(',')[1];
+    //     window.open( 'data:application/octet-stream;base64,' + data );
+    //     return false;
+    // });
 });
 
 function loadDevice(){
@@ -41,6 +52,8 @@ function takePicture(){
 }
 
 function stickPicture( base64 ){
+    $('.mirror, .mirror-loading').fadeIn();
+
     $.ajax({
         type: 'post',
         url: 'stick',
@@ -52,12 +65,32 @@ function stickPicture( base64 ){
         if( response.status ){
             showResult( response.picture );
         }else{
-
+            closeMirror();
+            showError( response.error );
         }
     });
 }
 
+var inError = false;
+function showError( error ){
+    if( !inError ){
+        inError = true;
+
+        $('.error').html( error ).fadeIn();
+        setTimeout( function(){
+            $('.error').fadeOut();
+            inError = false;
+        }, 5000 );
+    }
+}
+
 function showResult( picture ){
-    $('.mirror-picture').attr( 'src', picture );
-    $('.mirror').fadeIn();
+    $('.mirror-loading').hide();
+    $('.mirror-picture__diplay').attr( 'src', picture );
+    $('.mirror-picture__download').attr( 'href', picture );
+    $('.mirror-picture').fadeIn();
+}
+
+function closeMirror(){
+    $('.mirror, .mirror-loading, .mirror-picture').hide();
 }

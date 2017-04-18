@@ -1,11 +1,21 @@
 <% include component/header.ejs %>
 
+<h1>StickMyFace</h1>
+
 <video id="camera">
 </video>
+
+<p class="error"></p>
 <button class="stick">Stick</button>
 
-<div class="mirror">
-    <img class="mirror-picture" src="" />
+<div class="mirror hide">
+    <div class="mirror-picture hide">
+        <img class="mirror-picture__diplay" src="" />
+
+        <a href="#" class="mirror-picture__close"><img src="img/close.png" /></a>
+        <a href="#" download="face.jpg" class="mirror-picture__download"><img src="img/download.png" /></a>
+    </div>
+    <img class="mirror-loading hide" src="img/loading.gif" />
 </div>
 
 <canvas id="renderer" class="hide" width="640" height="480"></canvas>

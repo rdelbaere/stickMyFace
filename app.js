@@ -20,15 +20,17 @@ application.post( '/stick', function( req, res ){
 
     if( req.body.picture == undefined ){
         return res.send( JSON.stringify({
-            status: false
+            status: false,
+			error: 'Une erreur est survenue, veuillez réessayer plus tard.',
         }));
     }
 
     var sticker = new Sticker( req.body.picture, config );
-    sticker.build( function( data ){
-		if( data == false ){
+    sticker.build( function( err, data ){
+		if( err ){
 			return res.send( JSON.stringify({
 	            status: false,
+				error: err,
 	        }));
 		}
 
