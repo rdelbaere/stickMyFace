@@ -10,12 +10,6 @@ $(document).ready( function(){
         closeMirror();
         return false;
     });
-
-    // $('.mirror-picture__download').click( function(){
-    //     var data = $('.mirror-picture__diplay').attr('src').split(',')[1];
-    //     window.open( 'data:application/octet-stream;base64,' + data );
-    //     return false;
-    // });
 });
 
 function loadDevice(){
@@ -31,13 +25,12 @@ function loadDevice(){
     );
 
     navigator.getUserMedia( config, function( stream ){
-
         var vendor = window.URL || window.webkitURL;
         $('#camera').attr( 'src' , vendor.createObjectURL(stream) );
         $('#camera').get(0).play();
-
+        $('.stick').show();
     }, function( err ){
-        console.log('Failed to load device');
+        $('.error').html("Malheureusement votre navigateur ne permet pas d'accéder à la caméra de votre appareil.").fadeIn();
     });
 }
 
