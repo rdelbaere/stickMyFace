@@ -26,7 +26,7 @@ function loadDevice(){
 
     navigator.getUserMedia( config, function( stream ){
         var vendor = window.URL || window.webkitURL;
-        $('#camera').attr( 'src' , vendor.createObjectURL(stream) );
+        $('#camera').get(0).srcObject = stream;
         $('#camera').get(0).play();
         $('.stick').show();
     }, function( err ){
