@@ -1,4 +1,4 @@
-<% include component/header.ejs %>
+<%- include ('component/header.ejs') -%>
 <h1>StickMyFace</h1>
 
 <video id="camera">
@@ -24,4 +24,4 @@ var prefix = '<%= prefix %>';
 </script>
 <script src="https://code.jquery.com/jquery-2.2.4.min.js"></script>
 <script src="/stickMyFace/asset/js/capture.js"></script>
-<% include component/footer.ejs %>
+<%- include ('component/footer.ejs') -%>
